@@ -1,14 +1,15 @@
 ---
 title: "Algoritma K-Modes dengan R"
+author: "Dewi Sri Hastuti-Institut Teknologi Statistika dan Bisnis Muhammadiyah"
 date: "`r Sys.Date()`"
-author: Dewi Sri Hastuti-Institut Teknologi Statistika dan Bisnis Muhammadiyah
-output:
-  rmdformats::downcute:
-    self_contained: true
-    thumbnails: true
-    lightbox: true
-    gallery: false
-    highlight: tango
+output: 
+  html_document:
+    theme: flatly
+    higlight: zenburn
+    toc: true
+    toc_float:
+      collapsed: true
+    df_print: paged
 bibliography: references.bib
 ---
 
@@ -22,108 +23,105 @@ text-align: justify}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# **Definisi**
+# **Definisi Algoritma K-Modes**
+
 K-Modes dikembangkan oleh Leonard Kaufman dan Peter J. Rousseeuw sekitar tahun 1987, diperkenalkan pertama kali oleh Huang pada tahun 1997.
 
-Algoritma K-Meodes sama seperti algoritma K-Means yaitu salah satu teknik dalam data mining untuk mengelompokkan (clustering) data kedalam beberapa kelompok berdasarkan jarak, kriteria, kondisi, atau karakteristik. (Buulolo, 2020) 
+Algoritma K-Meodes sama seperti algoritma K-Means yaitu salah satu teknik dalam data mining untuk mengelompokkan (clustering) data kedalam beberapa kelompok berdasarkan jarak, kriteria, kondisi, atau karakteristik. (Buulolo, 2020)
 
 Perbedaan antara keduanya adalah algoritma K-Means yang terbatas pada penggunaan data bertipe numerik karena pengelompokannya dengan menghitung rata-rata (mean) dari suatu data dengan data yang lain. Sedangkan adanya algoritma K-Modes bertujuan untuk memperbaiki keterbatasan pada algoritma K-Means dengan cara dimodifikasi dari perhitungan rata-rata (mean) menjadi nilai yang sering muncul (modus).
 
 Algotirma K-Modes merupakan pengembangan dari algoritma K-Means untuk mengelompokkan data kategorik (nominal dan ordinal) dan memiliki kelebihan untuk mengatasi kelemahan algoritma K-Means yang sensitif terhadap data noise atau data outlier. Jollyta, Deni, dkk dalam Furqon, dkk., 2015 mengemukakan kelebihan lainnya yaitu hasil proses clustering tidak bergantung pada urutan masuk dataset.
 
 # **Tahapan Algoritma K-Modes**
-  Algoritma K-Modes memiliki beberapa tahapan sebagai berikut :
-  
-  1. Menyiapkan sampel dari dataset yang dipilih.
 
-  2. Menentukan jumlah klaster yang akan dibentuk pada r data. Banyaknya klaster      tidak boleh lebih dari banyaknya data (k<r) nilai k = 2, 3, 4, 5, ..., 8         atau yang lainnya.
+Algoritma K-Modes memiliki beberapa tahapan sebagai berikut :
 
-  3. Menentukan centroid (pusat klaster) secara acak dari masing-masing klaster.
+1.  Menyiapkan sampel dari dataset yang dipilih.
 
-  4. Menghitung jarak tiap data (objek) terhadap semua centroid. 
+2.  Menentukan jumlah klaster yang akan dibentuk pada r data. Banyaknya klaster tidak boleh lebih dari banyaknya data (k\<r) nilai k = 2, 3, 4, 5, ..., 8 atau yang lainnya.
 
-  5. Mengelompokkan objek berdasarkan jarak terdekat ke centroid.
+3.  Menentukan centroid (pusat klaster) secara acak dari masing-masing klaster.
 
-  6. Memperbarui centroid masing-masing klaster berdasarkan modus dari setiap         variable anggota klaster yang terbentuk.
+4.  Menghitung jarak tiap data (objek) terhadap semua centroid.
 
-  7. Menghitung ulang jarak setiap data (objek) terhadap centroid baru                menggunakan ukuran ketidaksamaan sederhana seperti langkah ke-3. 
-  
-     **Rumus** 
-     \begin{equation}d(x, y)=\sum_{j = i}^r \epsilon(x j, y j)\end{equation}
-     
-     Dengan 
-     \begin{equation}\epsilon(x j, y j)=\left\{\begin{array}{l}0 (x j = y j) \\1      (x j \neq y j)\end{array}\right.\end{equation}
+5.  Mengelompokkan objek berdasarkan jarak terdekat ke centroid.
 
-  8. Apabila masih ada objek yang berpindah klaster, maka ulangi langkah ke-6         sampai ke-8 hingga tidak ada objek yang berpindah klaster.
+6.  Memperbarui centroid masing-masing klaster berdasarkan modus dari setiap variable anggota klaster yang terbentuk.
+
+7.  Menghitung ulang jarak setiap data (objek) terhadap centroid baru menggunakan ukuran ketidaksamaan sederhana seperti langkah ke-3.
+
+8.  Apabila masih ada objek yang berpindah klaster, maka ulangi langkah ke-6 sampai ke-8 hingga tidak ada objek yang berpindah klaster.
 
 # **Eksperimen Algoritma**
-Pada eksperimen ini algoritma K-Modes akan digunakan untuk mengetahui 
 
-Untuk menjalankan algoritma K-Modes dibutuhkan library MASS dan library KlaR
+Pada eksperimen ini algoritma K-Modes akan digunakan untuk mengetahui
+
+Untuk menjalankan algortima K-Modes dibutuhkan library [MASS](https://rdrr.io/cran/MASS/) dan library [KlaR](https://rdrr.io/cran/klaR/)
 
 ```{r}
 library(MASS)
 library(klaR)
 ```
 
-Package readxl menyiapkan fungsi read_xl() untuk import data dari file xls. Pada kasus ini digunakan data Golf.
-
+Package **readxl** menyiapkan fungsi [read_excel()](https://rdrr.io/cran/readxl/) untuk import data dari file XLS. Pada kasus ini digunakan data Golf.
 
 ```{r}
 library (readxl)
-Data <- read_excel("D:/dataset/Golf.xls", sheet = 2)
+Data <- read_excel("~/DATA MINING/R Project/Algoritma-K-Modes/Golf.xls", sheet = 2)
 ```
 
+Setelah input data berhasil dilakukan, langkah selanjutnya adalah panggil data supaya data yang sudah diinput dapat ditampilkan.
 
 ```{r}
 Data
 ```
 
+Karena data Golf yang sudah diinput sebelumnya terdapat variabel yang berisi data numerik, yaitu pada variabel No, maka kita hapus terlebih dahulu kolom variabel tersebut karena hanya dibutuhkan data kategorik saja pada pengoperasian algoritma K-Modes.
+
 ```{r}
-Data_Golf= Data[-1]
+Data1 = Data[-1] 
 ```
+
+Setelah itu, panggil kembali data untuk mengecek apakah kolom variabel No sudah berhasil dihapus atau belum.
+
+```{r}
+Data1
+```
+Karena pada Algoritma K-Modes tidak dibutuhkan label, sehingga kolom pada variabel Play juga perlu dihapus.
+
+```{r}
+Data_Golf = Data1[-5]
+```
+
+Setelah itu panggil data kembali untuk melihat apakah kolom variabel Play yang merupakan label sudah terhapus dari data.
 
 ```{r}
 Data_Golf
 ```
 
-
-**Memeriksa Missing Value**
+Langkah selanjutnya adalah memeriksa missing value.
 
 ```{r}
 colSums(is.na(Data_Golf))
 ```
 
-Tidak ada data yang kosong pada setiap variabelnya
+Diketahui hasil bahwa tidak ada data yang kosong pada setiap variabelnya.
+
+Setelah data berhasil diimport dan siap untuk dioperasikan, jalankan algoritma [K-Modes](https://www.rdocumentation.org/packages/klaR/versions/0.6-15/topics/kmodes)
 
 ```{r}
-cluster.results <- kmodes(Data_Golf, 2, iter.max = 14, weighted = FALSE, fast = TRUE)
-
+cluster.results <-kmodes(Data_Golf, 3, iter.max = 14, weighted = FALSE )
 cluster.output <- cbind(Data_Golf, cluster.results$cluster)
 ```
+
+Langkah terakhir yaitu memunculkan hasil akhir dari operasi algoritma [K-Modes.](https://www.rdocumentation.org/packages/klaR/versions/0.6-15/topics/kmodes) yang sudah dijalankan.
 
 ```{r}
 head(cluster.output, n = 14)
 ```
 
-
-
-
-
 # Reference
-https://rpubs.com/dedenistiawan/kmodes
+1. <https://rpubs.com/dedenistiawan/kmodes>
 
-https://search.r-project.org/CRAN/refmans/klaR/html/kmodes.html
-
-Jollyta, Deni, dkk. 2020. Konsep Data Mining dan Penerapan.  Yogyakarta : Deepublish.	
-
-Buulolo, Efori. 2020. Data Mining untuk Perguruan Tinggi. Yogyakarta : Deepublish.		
-
-Ahmad Badruttamam, Sudarno, Di Asih I Maruddani. 2020. Penerapan Analisis Klaster K-Modes dengan Validasi Davies Bouldin Index dalam Menentukan Karakteristik Kanal Youtube Di Indonesia. Jurnal Gaussian Vol.9 No.3. 263-272. Semarang : Universitas Diponegoro. https://ejournal3.undip.ac.id/index.php/gaussian/article/view/27416 (diakses November).	
-
-Azzahra, Marsaoly, Lestyani, Salsabila & Madjida. 2021. Penerapan Algoritma K-Modes Clustering dengan Validasi Davies Bouldin Index pada Pengelompokkan Tingkat Minat Belanja Online di Provinsi Daerah Istimewa Yogyakarta. Jurnal Matematika dan Statistika serta Aplikasinya Vol.9 No. 1.
-https://journal.uin-alauddin.ac.id/index.php/msa/article/view/18555 (diakses November).
-
-
-
-
+2. <https://github.com/ddewisrihst/Algoritma-K-Modes>

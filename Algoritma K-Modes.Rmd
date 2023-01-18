@@ -121,7 +121,7 @@ Langkah terakhir yaitu memunculkan hasil akhir dari operasi algoritma [K-Modes.]
 head(cluster.output, n = 14)
 ```
 
-# Reference
+# **Reference**
 1. <https://rpubs.com/dedenistiawan/kmodes>
 
 2. <https://github.com/ddewisrihst/Algoritma-K-Modes>
